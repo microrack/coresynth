@@ -78,6 +78,8 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
 
+void app();
+
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
@@ -340,6 +342,8 @@ void StartDefaultTask(void const * argument)
 {
 
   /* USER CODE BEGIN 5 */
+  app();
+  
   /* Infinite loop */
   for(;;)
   {
