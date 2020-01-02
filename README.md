@@ -77,11 +77,12 @@
 
 _seq — управление осциллятором от секвенсера_
 
-mode	VCO		Digiosc
-1		seq		seq
-2		seq		MIDI-2
-3		MIDI-2	seq
-4		MIDI-1	MIDI-2
+| mode | VCO | Digiosc |
+|---|---|---|
+| 1 | seq | seq |
+| 2 | seq | MIDI-2 |
+| 3 | MIDI-2 | seq |
+| 4 | MIDI-1 | MIDI-2 |
 
 ### `S7` DigiOsc mode
 
