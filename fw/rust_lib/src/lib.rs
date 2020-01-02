@@ -29,8 +29,8 @@ use glue::{
 };
 use os::{Duration, delay, init_timers, spawn};
 use crate::hal::init_statics;
-// use crate::hal::gpio_pin::{_PIN};
-use crate::hal::traits::{Pin, PinState};
+use crate::hal::gpio_pin::{LED_0_PIN, LED_1_PIN, LED_2_PIN, LED_3_PIN};
+use crate::hal::traits::{Pin, PinState, GpioMode};
 // use crate::hal::spi::_SPI;
 use crate::os::{MailSender, mail_queue, MailReceiver};
 use crate::store::{GlobalEvent, GlobalState, Store, DebugInfo, DEBUG_INFO_RECEIVER, DEBUG_INFO_SENDER};
@@ -105,7 +105,7 @@ pub extern "C" fn handle_input(enc1: u8, enc2: u8) {
 
 // This function should be called only from GPIO ISR
 #[no_mangle]
-pub extern "C" fn handle_button(button_state: u8) {
+pub extern "C" fn handle_button(button_state: u8, button_id: u8) {
     /*
     use GlobalEvent::PhysicalButton;
     match MAIN_SENDER.get() {
@@ -142,6 +142,11 @@ pub extern "C" fn app() {
     let (debug_info_sender, debug_info_receiver) = mail_queue::<DebugInfo>(2).unwrap();
     DEBUG_INFO_SENDER.init(debug_info_sender);
     DEBUG_INFO_RECEIVER.init(debug_info_receiver);
+
+    LED_0_PIN.lock().unwrap().mode(GpioMode::GPIO_MODE_OUTPUT_PP);
+    LED_1_PIN.lock().unwrap().mode(GpioMode::GPIO_MODE_OUTPUT_PP);
+    LED_0_PIN.lock().unwrap().write(PinState::Set);
+    LED_1_PIN.lock().unwrap().write(PinState::Reset);
 
     // TODO check stack size in linux
     spawn("telemetry_thread", 128, telemetry_thread_fn).unwrap();

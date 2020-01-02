@@ -223,6 +223,7 @@ impl StoreState<GlobalEvent> for GlobalState {
         use self::GlobalEvent::*;
 
         match event {
+            Jog(_) => {},
             _ => debug_println!("event: {:?}", event),
         }
 

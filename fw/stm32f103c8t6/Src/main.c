@@ -290,6 +290,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
@@ -300,10 +301,20 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
   HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : PB10 PB11 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
 }
 
 /* USER CODE BEGIN 4 */
-
+#include "glue.h"
 /* USER CODE END 4 */
 
 /* StartDefaultTask function */
@@ -312,6 +323,24 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
   app();
+
+  /*
+  gpio_init(GPIOB, GPIO_PIN_12, GPIO_MODE_OUTPUT_PP);
+  gpio_init(GPIOB, GPIO_PIN_13, GPIO_MODE_OUTPUT_PP);
+  gpio_init(GPIOB, GPIO_PIN_14, GPIO_MODE_INPUT);
+  gpio_init(GPIOB, GPIO_PIN_15, GPIO_MODE_INPUT);
+  */
+
+  /*
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
+  osDelay(100);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
+  osDelay(100);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
+  */
 
   float freqs[] = {0.1, 0.0, 0.3, 0.0, 0.3, 0.0, 0.3, 0.1};
   float freq = 0.35;

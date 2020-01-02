@@ -3,12 +3,19 @@
 
 #include <string.h>
 
+const uint32_t TICKS_FREQ = osKernelSysTickFrequency;
+
 void system_reset() {
     NVIC_SystemReset();
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t pin) {
-
+    if(pin == GPIO_PIN_10 || pin == GPIO_PIN_10) {
+        handle_input(
+            HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_SET ? 1 : 0,
+            HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_SET ? 1 : 0
+        );
+    }
 }
 
 void set_pwm(float value, TIM_HandleTypeDef* tim, uint32_t channel) {
@@ -35,7 +42,7 @@ void gpio_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, uint32_t mode) {
 
     GPIO_InitStruct.Pin = GPIO_Pin;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
     GPIO_InitStruct.Mode = mode;
 
     HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);

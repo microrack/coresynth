@@ -11,4 +11,4 @@ void system_reset();
 void gpio_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, uint32_t mode);
 
 // TODO for some reason, bindgen wont generate osKernelSysTickFrequency
-const uint32_t TICKS_FREQ = osKernelSysTickFrequency;
+extern const uint32_t TICKS_FREQ;
