@@ -1,0 +1,6 @@
+user: developer
+group: developer
+paths:
+  - /project
+  - /home/developer
+  - /home/developer/.cargo/registry

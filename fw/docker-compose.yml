@@ -11,4 +11,4 @@ services:
       - .docker/cache/cargo_registry:/home/developer/.cargo/registry
       - .docker/fixuid.yml:/etc/fixuid/config.yml
       - /dev/bus/usb:/dev/bus/usb
-    working_dir: "/project/stm32f103c8t"
+    working_dir: "/project/stm32f103c8t6"
