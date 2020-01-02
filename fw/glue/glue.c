@@ -1,5 +1,5 @@
 #include "glue.h"
-#include "evapolar4.h"
+#include "coresynth.h"
 
 #include <string.h>
 

@@ -2,7 +2,7 @@
 name = "coresynth"
 version = "0.1.0"
 authors = ["Mikhail Cheshkov <mcheshkov@gmail.com>", "Andrew Strokov <mail@s3f.ru>"]
-edition = "2020"
+edition = "2018"
 
 [lib]
 crate-type = ["rlib", "staticlib"]
