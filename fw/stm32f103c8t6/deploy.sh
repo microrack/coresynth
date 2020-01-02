@@ -1,1 +1,1 @@
-st-flash write build/fw.bin 0x08000000
+st-flash write stm32f103c8t6/build/fw.bin 0x08000000

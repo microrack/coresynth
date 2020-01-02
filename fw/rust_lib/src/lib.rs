@@ -145,7 +145,6 @@ pub extern "C" fn app() {
 
     // TODO check stack size in linux
     spawn("telemetry_thread", 128, telemetry_thread_fn).unwrap();
-    // spawn("uvlo_thread", 128, uvlo_thread_fn).unwrap();
     spawn("debug_info_thread", 256, debug_info_thread_fn).unwrap();
 
     debug_println!("Starting main loop");

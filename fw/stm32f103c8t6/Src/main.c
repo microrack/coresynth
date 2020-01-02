@@ -143,7 +143,7 @@ int main(void)
 
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
-  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 128);
+  osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 512);
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
@@ -163,40 +163,9 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  float freqs[] = {0.1, 0.0, 0.3, 0.0, 0.3, 0.0, 0.3, 0.1};
-  float freq = 0.35;
-
-  size_t freq_index = 0;
-
-  uint32_t delay_time = 50;
-
-  while (1)
-  {
-    freq_index++;
-
-    if(freq_index > (sizeof(freqs)/sizeof(freqs[0])) - 1) {
-      freq_index = 0;
-    }
-
-    freq = freqs[freq_index];
-
-    _set_pwm(freq);
-
-    if(freq_index == 0) {
-      HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-      HAL_Delay(delay_time);
-    } else if(freq_index == 1) {
-      HAL_Delay(delay_time);
-      HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
-    } else {
-      HAL_Delay(delay_time);
-    }
-
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-
-  }
   /* USER CODE END 3 */
 
 }
@@ -343,11 +312,34 @@ void StartDefaultTask(void const * argument)
 
   /* USER CODE BEGIN 5 */
   app();
-  
-  /* Infinite loop */
-  for(;;)
-  {
-    osDelay(1);
+
+  float freqs[] = {0.1, 0.0, 0.3, 0.0, 0.3, 0.0, 0.3, 0.1};
+  float freq = 0.35;
+
+  size_t freq_index = 0;
+
+  uint32_t delay_time = 50;
+
+  while (1) {
+    freq_index++;
+
+    if(freq_index > (sizeof(freqs)/sizeof(freqs[0])) - 1) {
+      freq_index = 0;
+    }
+
+    freq = freqs[freq_index];
+
+    _set_pwm(freq);
+
+    if(freq_index == 0) {
+      HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+      osDelay(delay_time);
+    } else if(freq_index == 1) {
+      osDelay(delay_time);
+      HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+    } else {
+      osDelay(delay_time);
+    }
   }
   /* USER CODE END 5 */ 
 }
