@@ -34,7 +34,7 @@ fn main() {
     generate_glue_bindings(&out_path, force_bindgen);
 }
 
-const STM32_SDK_ROOT: &str = "../stm32f103cbt";
+const STM32_SDK_ROOT: &str = "../stm32f103c8t6";
 
 fn stm32_builder() -> bindgen::Builder {
     let stm32_sdk_includes = [
@@ -75,7 +75,7 @@ fn stm32_builder() -> bindgen::Builder {
         .derive_debug(false)
 
         .clang_arg("-DUSE_HAL_DRIVER")
-        .clang_arg("-DSTM32F103x8")
+        .clang_arg("-DSTM32F103xB")
 
         .clang_args(
             (includes.iter().map(|x| From::from(x as &str)).chain(stm32_sdk_includes))
