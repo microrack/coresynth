@@ -6,10 +6,12 @@ use super::bindings::{
     GPIO_PinState,
 };
 
+use crate::glue::gpio_init;
+
 use crate::os::Mutex;
 use crate::peripheral::Static;
 
-use crate::hal::traits::{Pin, PinState, Error, Result};
+use crate::hal::traits::{Pin, PinState, Error, Result, GpioMode};
 
 pub struct GPIOPin {
     gpio_port: *mut GPIO_TypeDef,
@@ -38,7 +40,12 @@ impl Pin for GPIOPin {
             GPIO_PinState::GPIO_PIN_SET => PinState::Set,
         }
     }
+
+    fn mode(&self, mode: GpioMode) {
+        unsafe { gpio_init(self.gpio_port, self.pin, mode as u32) };
+    }
 }
+
 
 // pub static _PIN: Static<Mutex<GPIOPin>> = Static::new();
 
@@ -46,7 +53,11 @@ fn init_pin(
     statik: &Static<Mutex<GPIOPin>>,
     gpio_port: *mut GPIO_TypeDef,
     pin: u16,
+    mode: GpioMode
 ) -> Result<()> {
+
+    unsafe { gpio_init(gpio_port, pin, mode as u32) };
+
     let pin = GPIOPin {
         gpio_port,
         pin,

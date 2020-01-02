@@ -1,3 +1,5 @@
+use crate::hal::stm32_hal::bindings::GPIO_TypeDef;
+
 include!(concat!(env!("OUT_DIR"), "/glue_bindings.rs"));
 
 // bindgen can't handle defines with type casts

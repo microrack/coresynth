@@ -2,7 +2,7 @@ pub mod gpio_pin;
 mod release;
 pub mod stm32_uart;
 
-mod bindings;
+pub mod bindings;
 
 use crate::hal::traits::Result;
 

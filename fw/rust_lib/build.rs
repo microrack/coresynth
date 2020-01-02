@@ -189,6 +189,8 @@ fn generate_glue_bindings<P: AsRef<Path>>(out_path: P, force: bool) {
         .whitelist_function("system_reset")
 
         .whitelist_var("TICKS_FREQ")
+
+        .whitelist_function("gpio_init")
     ;
 
     let bindings = builder.generate().expect("Unable to generate bindings");

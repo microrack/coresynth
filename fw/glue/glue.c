@@ -29,3 +29,14 @@ void print_value(char* str) {
 
     HAL_UART_Transmit(&huart1, (uint8_t*)str, (uint16_t)len, HAL_MAX_DELAY);
 }
+
+void gpio_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, uint32_t mode) {
+    GPIO_InitTypeDef GPIO_InitStruct;
+
+    GPIO_InitStruct.Pin = GPIO_Pin;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    GPIO_InitStruct.Mode = mode;
+
+    HAL_GPIO_Init(GPIOx, &GPIO_InitStruct);
+}

@@ -28,10 +28,27 @@ pub mod traits {
         Set,
     }
 
+    #[allow(non_camel_case_types)]
+    pub enum GpioMode {
+        GPIO_MODE_INPUT              = 0x00000000,   /* Input Floating Mode                   */
+        GPIO_MODE_OUTPUT_PP          = 0x00000001,   /* Output Push Pull Mode                 */
+        GPIO_MODE_OUTPUT_OD          = 0x00000011,   /* Output Open Drain Mode                */
+        GPIO_MODE_AF_PP              = 0x00000002,   /* Alternate Function Push Pull Mode     */
+        GPIO_MODE_AF_OD              = 0x00000012,   /* Alternate Function Open Drain Mode    */
+        GPIO_MODE_ANALOG             = 0x00000003,   /* Analog Mode  */  
+        GPIO_MODE_IT_RISING          = 0x10110000,   /* External Interrupt Mode with Rising edge trigger detection          */
+        GPIO_MODE_IT_FALLING         = 0x10210000,   /* External Interrupt Mode with Falling edge trigger detection         */
+        GPIO_MODE_IT_RISING_FALLING  = 0x10310000,   /* External Interrupt Mode with Rising/Falling edge trigger detection  */
+        GPIO_MODE_EVT_RISING         = 0x10120000,   /* External Event Mode with Rising edge trigger detection               */
+        GPIO_MODE_EVT_FALLING        = 0x10220000,   /* External Event Mode with Falling edge trigger detection              */
+        GPIO_MODE_EVT_RISING_FALLING = 0x10320000,   /* External Event Mode with Rising/Falling edge trigger detection       */
+    }
+
     pub trait Pin {
         fn write(&mut self, state: PinState);
         fn toggle(&mut self);
         fn read(&self) -> PinState;
+        fn mode(&self, mode: GpioMode);
     }
 
     pub trait SPI {
