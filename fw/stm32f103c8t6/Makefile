@@ -167,7 +167,7 @@ endif
 RUST_LIB_CMD = cd $(RUST_LIB_SRC) && cargo build $(RUST_LIB_FLAGS)
 
 # libraries
-LIBS = -lc -lm -lnosys -l$(RUST_LIB_NAME)
+LIBS = -lnosys -l$(RUST_LIB_NAME)
 LIBDIR = -L$(RUST_LIB_PATH)
 LDFLAGS = $(MCU) -specs=nano.specs -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -Wl,--gc-sections
 
