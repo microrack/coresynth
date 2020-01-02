@@ -85,7 +85,7 @@ pub static DEBUG_UART: Static<Mutex<STM32_UART>> = Static::new();
 pub static ALL_UARTS: [&Static<Mutex<STM32_UART>>; 1] = [&DEBUG_UART];
 
 pub fn debug_uart_init_static() -> Result<()> {
-    let uart = STM32_UART::new(unsafe { &mut huart1 })?;
+    let uart = STM32_UART::new(unsafe { &mut huart1 })?; // TODO specify uart
     let mutex = Mutex::new(uart)
         .map_err(|_| Error {
             call: "UART init static Mutex::new",

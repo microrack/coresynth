@@ -138,17 +138,20 @@ impl Release<SPI_HandleTypeDef> for SPI {
     }
 }
 
-pub static DISPLAY_SPI: Static<Mutex<SPI>> = Static::new();
-pub static ALL_SPIS: [&Static<Mutex<SPI>>;1] = [&DISPLAY_SPI];
+// pub static _SPI: Static<Mutex<SPI>> = Static::new();
+pub static ALL_SPIS: [&Static<Mutex<SPI>>;1] = [&_SPI]; // TODO
 
 pub fn spi_init_static() -> Result<()> {
+    /*
     let spi1 = SPI::new(unsafe { &mut hspi1 })?;
     let mutex = Mutex::new(spi1)
         .map_err(|_| Error {
             call: "SPI init static Mutex::new",
         })?;
 
-    DISPLAY_SPI.init(mutex);
+    _SPI.init(mutex);
+    */
+    
     Ok(())
 }
 

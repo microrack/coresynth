@@ -40,11 +40,7 @@ impl Pin for GPIOPin {
     }
 }
 
-pub static DISPLAY_CS_PIN: Static<Mutex<GPIOPin>> = Static::new();
-pub static BTN_PIN: Static<Mutex<GPIOPin>> = Static::new();
-pub static ENC1_PIN: Static<Mutex<GPIOPin>> = Static::new();
-pub static ENC2_PIN: Static<Mutex<GPIOPin>> = Static::new();
-pub static WT_SENS_PIN: Static<Mutex<GPIOPin>> = Static::new();
+// pub static _PIN: Static<Mutex<GPIOPin>> = Static::new();
 
 fn init_pin(
     statik: &Static<Mutex<GPIOPin>>,
@@ -74,19 +70,7 @@ macro_rules! init_pin {
 }
 
 pub fn init_pins() -> Result<()> {
-    // init_pin!(TS_FRONT);
-    // init_pin!(TS_BACK);
-    // init_pin!(V_SENS);
-    // init_pin!(RGB3);
-    init_pin!(DISPLAY_CS);
-    // init_pin!(FAN_SENS);
-    init_pin!(BTN);
-    init_pin!(ENC1);
-    init_pin!(ENC2);
-    init_pin!(WT_SENS);
-    // init_pin!(RGB1);
-    // init_pin!(RGB2);
-    // init_pin!(FAN_PWM);
+    // init_pin!(_PIN);
 
     Ok(())
 }
