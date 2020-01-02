@@ -33,11 +33,11 @@ use crate::hal::init_statics;
 use crate::hal::traits::{Pin, PinState};
 // use crate::hal::spi::_SPI;
 use crate::os::{MailSender, mail_queue, MailReceiver};
-use crate::store::{GlobalEvent, DebugInfo, DEBUG_INFO_RECEIVER, DEBUG_INFO_SENDER};
+use crate::store::{GlobalEvent, GlobalState, Store, DebugInfo, DEBUG_INFO_RECEIVER, DEBUG_INFO_SENDER};
 
 pub use store::MAIN_SENDER;
 
-fn main_loop<M:Max7219>(main_sender: MailSender<GlobalEvent>, main_receiver: MailReceiver<GlobalEvent>) -> ! {
+fn main_loop(main_sender: MailSender<GlobalEvent>, main_receiver: MailReceiver<GlobalEvent>) -> ! {
 
     let state = GlobalState::new();
 
@@ -106,6 +106,7 @@ pub extern "C" fn handle_input(enc1: u8, enc2: u8) {
 // This function should be called only from GPIO ISR
 #[no_mangle]
 pub extern "C" fn handle_button(button_state: u8) {
+    /*
     use GlobalEvent::PhysicalButton;
     match MAIN_SENDER.get() {
         Some(x) => {
@@ -113,6 +114,7 @@ pub extern "C" fn handle_button(button_state: u8) {
         },
         None => {},
     };
+    */
 }
 
 #[no_mangle]
@@ -130,7 +132,7 @@ pub extern "C" fn app() {
         .expect("Lock encoder 2 pin");
     */
 
-    unsafe { glue::set_pwm(0.0, &mut htim2, TIM_CHANNEL_4) };
+    // unsafe { glue::set_pwm(0.0, &mut htim2, TIM_CHANNEL_4) };
 
     debug_println!("\n\n === core synth ===\n");
 

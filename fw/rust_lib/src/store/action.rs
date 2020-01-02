@@ -14,6 +14,8 @@ pub enum JogDirection {
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum GlobalEvent {
+	Jog(JogDirection),
+	
     Wakeup,
     Info,
 }

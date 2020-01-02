@@ -1,7 +1,7 @@
 mod action;
 mod generic;
 
-pub use self::action::{GlobalEvent};
+pub use self::action::{GlobalEvent, JogDirection};
 pub use self::generic::Store;
 use self::generic::StoreState;
 
@@ -18,13 +18,15 @@ pub struct ButtonState {
 }
 
 use crate::config::{
-    DEBOUNCE_TIME, LONG_PRESS_TIME,
+    DEBOUNCE_TIME, LONG_PRESS_TIME, INFO_INTERVAL
 };
 
 
 #[derive(Debug)]
 pub struct GlobalState {
     raw_encoder: i32,
+
+    info_timer_id: Option<TimerId>,
 }
 
 const SEND_RETRY: u8 = 10;
@@ -62,7 +64,7 @@ impl DebugInfo {
         // On baud rate 115200 71ms is required to transmit 1 kB, it's too much for main thread
         debug_println!("\n# DEBUG START");
 
-        debug_println!("# JOG_ABS:{}\n# WT_PRESENT:{}\n# COLOR:{}\n# BRIGHTNESS:{}",
+        debug_println!("# JOG_ABS:{}",
             self.jog_absolute
         );
 
@@ -75,12 +77,15 @@ impl GlobalState {
 
         let mut res = GlobalState {
             raw_encoder: 0,
+
+            info_timer_id: None,
         };
 
         res
     }
 
     fn update_button(&mut self, sender: &MailSender<GlobalEvent>) {
+        /*
         if self.button_state.actual_state != self.button_state.logic_state {
             self.button_state.logic_state = self.button_state.actual_state;
 
@@ -92,9 +97,11 @@ impl GlobalState {
                 self.on_button_up(sender);
             }
         }
+        */
     }
 
     fn on_physical_button(&mut self, state:bool, sender: &MailSender<GlobalEvent>) {
+        /*
         self.button_state.actual_state = state;
         match self.button_state.debounce_timer_id {
             None => {
@@ -110,16 +117,20 @@ impl GlobalState {
                 // do nothing
             }
         }
+        */
     }
 
     fn on_button_down(&mut self, sender: &MailSender<GlobalEvent>) {
+        /*
         self.button_state.long_press_timer_id = Some(timeout(
             LONG_PRESS_TIME,
             move || { safe_send(&sender, GlobalEvent::LongPress); }
         ));
+        */
     }
 
     fn on_button_up(&mut self, sender: &MailSender<GlobalEvent>) {
+        /*
         if let Some(id) = self.button_state.long_press_timer_id {
             cancel_timeout(id);
         }
@@ -129,16 +140,21 @@ impl GlobalState {
             self.on_click(sender);
         }
         self.button_state.long_press_occurred = false;
+        */
     }
 
     fn on_long_press(&mut self, sender: &MailSender<GlobalEvent>) {
+        /*
         self.button_state.long_press_timer_id = None;
         self.button_state.long_press_occurred = true;
+        */
     }
 
     fn on_button_debounce(&mut self, sender: &MailSender<GlobalEvent>) {
+        /*
         self.button_state.debounce_timer_id = None;
         self.update_button(sender);
+        */
     }
 
     fn on_click(&mut self, sender: &MailSender<GlobalEvent>) {
