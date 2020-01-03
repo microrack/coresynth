@@ -16,6 +16,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin) {
             HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_SET ? 1 : 0
         );
     }
+
+    /*
+    if(pin == GPIO_PIN_0) {
+        handle_
+    }
+    */
 }
 
 void set_pwm(float value, TIM_HandleTypeDef* tim, uint32_t channel) {
