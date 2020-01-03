@@ -122,22 +122,26 @@ pub extern "C" fn handle_input(enc1: u8, enc2: u8) {
 
 // This function should be called only from GPIO ISR
 #[no_mangle]
-pub extern "C" fn handle_button(button_state: u8, button_id: u8) {
-    use GlobalEvent::{PhysicalButton, Buttons};
+pub extern "C" fn handle_button(button_state: u8, button_id: usize) {
+    use GlobalEvent::{PhysicalButton};
+    use crate::store::Buttons;
 
     let button = match button_id {
-        0..8 => Buttons::S(button_id),
-        8 => Buttons::Shift,
-        9 => Buttons::Play,
-        _ => {/* unknown button */}
+        0..=7 => Some(Buttons::S(button_id)),
+        8 => Some(Buttons::Shift),
+        9 => Some(Buttons::Play),
+        _ => None,
     };
 
-    match MAIN_SENDER.get() {
-        Some(x) => {
-            let _ = x.send(PhysicalButton(button_state != 0));
+    match button {
+        Some(button) => match MAIN_SENDER.get() {
+            Some(x) => {
+                let _ = x.send(PhysicalButton(button_state != 0, button));
+            },
+            None => {},
         },
         None => {},
-    };
+    }
 }
 
 use crate::os::Mutex;

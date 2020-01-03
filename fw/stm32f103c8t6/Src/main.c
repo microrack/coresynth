@@ -344,7 +344,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-#include "glue.h"
 /* USER CODE END 4 */
 
 /* StartDefaultTask function */

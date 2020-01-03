@@ -1,7 +1,7 @@
 mod action;
 mod generic;
 
-pub use self::action::{GlobalEvent, JogDirection};
+pub use self::action::{GlobalEvent, JogDirection, Buttons};
 pub use self::generic::Store;
 use self::generic::StoreState;
 
@@ -115,7 +115,7 @@ impl GlobalState {
         */
     }
 
-    fn on_physical_button(&mut self, state:bool, _sender: &MailSender<GlobalEvent>) {
+    fn on_physical_button(&mut self, state:bool, button: Buttons, _sender: &MailSender<GlobalEvent>) {
         /*
         self.button_state.actual_state = state;
         match self.button_state.debounce_timer_id {
@@ -263,7 +263,7 @@ impl StoreState<GlobalEvent> for GlobalState {
         match event {
             Jog(dir) => self.on_jog(dir, sender),
 
-            // PhysicalButton(state) => self.on_physical_button(state, sender),
+            PhysicalButton(state, button) => self.on_physical_button(state, button, sender),
             // ButtonDebounce => self.on_button_debounce(sender),
             // LongPress => self.on_long_press(sender),
 

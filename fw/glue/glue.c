@@ -3,25 +3,39 @@
 
 #include <string.h>
 
-const uint32_t TICKS_FREQ = osKernelSysTickFrequency;
-
 void system_reset() {
     NVIC_SystemReset();
 }
 
+uint32_t BUTTON_GPIOS[] = {
+    GPIO_PIN_0,
+    GPIO_PIN_1,
+    GPIO_PIN_2,
+    GPIO_PIN_3,
+    GPIO_PIN_4,
+    GPIO_PIN_5,
+    GPIO_PIN_6,
+    GPIO_PIN_7,
+    GPIO_PIN_8,
+    GPIO_PIN_12
+};
+
 void HAL_GPIO_EXTI_Callback(uint16_t pin) {
-    if(pin == GPIO_PIN_10 || pin == GPIO_PIN_10) {
+    if(pin == GPIO_PIN_10 || pin == GPIO_PIN_11) {
         handle_input(
             HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_SET ? 1 : 0,
             HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_SET ? 1 : 0
         );
     }
 
-    /*
-    if(pin == GPIO_PIN_0) {
-        handle_
+    size_t id = 0;
+
+    for(id = 0; id < 10; id++) {
+        if(pin == BUTTON_GPIOS[id]) {
+            handle_button(HAL_GPIO_ReadPin(GPIOA, BUTTON_GPIOS[id]) == GPIO_PIN_SET ? 1 : 0, id);
+            break;
+        }
     }
-    */
 }
 
 void set_pwm(float value, TIM_HandleTypeDef* tim, uint32_t channel) {

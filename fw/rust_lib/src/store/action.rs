@@ -22,7 +22,7 @@ pub enum Buttons {
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum GlobalEvent {
 	Jog(JogDirection),
-	
+	PhysicalButton(bool, Buttons),
     Wakeup,
     Info,
 }
