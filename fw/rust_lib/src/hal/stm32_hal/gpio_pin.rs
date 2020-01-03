@@ -15,6 +15,7 @@ use crate::hal::traits::{Pin, PinState, Error, Result, GpioMode};
 
 #[allow(non_camel_case_types)]
 #[derive(Clone, Copy)]
+#[allow(dead_code)]
 enum GPIO_PIN {
     GPIO_PIN_0  = 0x0001,
     GPIO_PIN_1  = 0x0002,
@@ -95,12 +96,16 @@ fn init_pin(
     Ok(())
 }
 
-
+#[allow(dead_code)]
 const PERIPH_BASE: u32 = 0x40000000;
+#[allow(dead_code)]
 const APB2PERIPH_BASE: u32 = PERIPH_BASE + 0x10000;
 
+#[allow(dead_code)]
 const GPIOA: *mut GPIO_TypeDef = (APB2PERIPH_BASE + 0x0800) as *mut GPIO_TypeDef;
+#[allow(dead_code)]
 const GPIOB: *mut GPIO_TypeDef = (APB2PERIPH_BASE + 0x0C00) as *mut GPIO_TypeDef;
+#[allow(dead_code)]
 const GPIOC: *mut GPIO_TypeDef = (APB2PERIPH_BASE + 0x1000) as *mut GPIO_TypeDef;
 
 macro_rules! init_pin {

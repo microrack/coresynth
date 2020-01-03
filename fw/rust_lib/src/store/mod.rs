@@ -21,10 +21,17 @@ use crate::config::{
     DEBOUNCE_TIME, LONG_PRESS_TIME, INFO_INTERVAL
 };
 
+const SEQUENCER_JOG_DIVIDER: i32 = 3;
 
 #[derive(Debug)]
 pub struct GlobalState {
     raw_encoder: i32,
+
+    pub s_led: [bool; 8],
+    pub run_led: bool,
+
+    sequencer_encoder_counter: i32,
+    sequencer_counter: i8,
 
     info_timer_id: Option<TimerId>,
 }
@@ -56,6 +63,7 @@ fn safe_send(sender: &MailSender<GlobalEvent>, event: GlobalEvent) {
 
 pub struct DebugInfo {
     jog_absolute: i32,
+    sequencer_counter: i8,
 }
 
 impl DebugInfo {
@@ -64,8 +72,9 @@ impl DebugInfo {
         // On baud rate 115200 71ms is required to transmit 1 kB, it's too much for main thread
         debug_println!("\n# DEBUG START");
 
-        debug_println!("# JOG_ABS:{}",
-            self.jog_absolute
+        debug_println!("# JOG_ABS:{}, JOG_SEQ:{}",
+            self.jog_absolute,
+            self.sequencer_counter,
         );
 
         debug_println!("# DEBUG END\n");
@@ -78,13 +87,19 @@ impl GlobalState {
         let mut res = GlobalState {
             raw_encoder: 0,
 
+            s_led: [false; 8],
+            run_led: false,
+
+            sequencer_encoder_counter: 0,
+            sequencer_counter: 0,
+
             info_timer_id: None,
         };
 
         res
     }
 
-    fn update_button(&mut self, sender: &MailSender<GlobalEvent>) {
+    fn update_button(&mut self, _sender: &MailSender<GlobalEvent>) {
         /*
         if self.button_state.actual_state != self.button_state.logic_state {
             self.button_state.logic_state = self.button_state.actual_state;
@@ -100,7 +115,7 @@ impl GlobalState {
         */
     }
 
-    fn on_physical_button(&mut self, state:bool, sender: &MailSender<GlobalEvent>) {
+    fn on_physical_button(&mut self, state:bool, _sender: &MailSender<GlobalEvent>) {
         /*
         self.button_state.actual_state = state;
         match self.button_state.debounce_timer_id {
@@ -120,7 +135,7 @@ impl GlobalState {
         */
     }
 
-    fn on_button_down(&mut self, sender: &MailSender<GlobalEvent>) {
+    fn on_button_down(&mut self, _sender: &MailSender<GlobalEvent>) {
         /*
         self.button_state.long_press_timer_id = Some(timeout(
             LONG_PRESS_TIME,
@@ -129,7 +144,7 @@ impl GlobalState {
         */
     }
 
-    fn on_button_up(&mut self, sender: &MailSender<GlobalEvent>) {
+    fn on_button_up(&mut self, _sender: &MailSender<GlobalEvent>) {
         /*
         if let Some(id) = self.button_state.long_press_timer_id {
             cancel_timeout(id);
@@ -143,7 +158,7 @@ impl GlobalState {
         */
     }
 
-    fn on_long_press(&mut self, sender: &MailSender<GlobalEvent>) {
+    fn on_long_press(&mut self, _sender: &MailSender<GlobalEvent>) {
         /*
         self.button_state.long_press_timer_id = None;
         self.button_state.long_press_occurred = true;
@@ -157,17 +172,17 @@ impl GlobalState {
         */
     }
 
-    fn on_click(&mut self, sender: &MailSender<GlobalEvent>) {
+    fn on_click(&mut self, _sender: &MailSender<GlobalEvent>) {
 
     }
 
-    fn turn_on(&mut self, sender: &MailSender<GlobalEvent>) {
+    fn turn_on(&mut self, _sender: &MailSender<GlobalEvent>) {
 
     }
 
 
 
-    fn on_jog(&mut self, dir: JogDirection, sender: &MailSender<GlobalEvent>) {
+    fn on_jog(&mut self, dir: JogDirection, _sender: &MailSender<GlobalEvent>) {
         use JogDirection::*;
 
         match dir {
@@ -175,21 +190,36 @@ impl GlobalState {
             Right => self.raw_encoder += 1,
         }
 
-        // debug_println!("jog: {}", self.raw_encoder);
-
-        /*
-        if self._encoder_counter == _JOG_DIVIDER || self._encoder_counter == -_JOG_DIVIDER {
-            if self._encoder_counter == -_JOG_DIVIDER && 1 {
-                
-            }
-
-            if self._encoder_counter == FAN_JOG_DIVIDER && 1 {
-                
-            }
-
-            self._encoder_counter = 0;
+        match dir {
+            Left => self.sequencer_encoder_counter -= 1,
+            Right => self.sequencer_encoder_counter += 1,
         }
-        */
+
+        if self.sequencer_encoder_counter == SEQUENCER_JOG_DIVIDER || self.sequencer_encoder_counter == -SEQUENCER_JOG_DIVIDER {
+            if self.sequencer_encoder_counter == -SEQUENCER_JOG_DIVIDER && true {
+                if self.sequencer_counter > 0 {
+                    // debug_println!("prev");
+                    self.sequencer_counter -= 1;
+                }
+            }
+
+            if self.sequencer_encoder_counter == SEQUENCER_JOG_DIVIDER && true {
+                if self.sequencer_counter + 1 < 8 {
+                    // debug_println!("next");
+                    self.sequencer_counter += 1;
+                }
+            }
+
+            for led in &mut self.s_led {
+                *led = false;
+            }
+
+            if self.sequencer_counter >= 0 && self.sequencer_counter < 8 {
+                self.s_led[self.sequencer_counter as usize] = true;
+            }
+
+            self.sequencer_encoder_counter = 0;
+        }
     }
 
     fn make_debug_info(&mut self) -> DebugInfo {
@@ -197,6 +227,7 @@ impl GlobalState {
 
         let result = DebugInfo {
             jog_absolute: self.raw_encoder,
+            sequencer_counter: self.sequencer_counter,
         };
 
         result

@@ -29,6 +29,7 @@ pub mod traits {
     }
 
     #[allow(non_camel_case_types)]
+    #[allow(dead_code)]
     pub enum GpioMode {
         GPIO_MODE_INPUT              = 0x00000000,   /* Input Floating Mode                   */
         GPIO_MODE_OUTPUT_PP          = 0x00000001,   /* Output Push Pull Mode                 */

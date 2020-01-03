@@ -46,7 +46,19 @@ fn main_loop(main_sender: MailSender<GlobalEvent>, main_receiver: MailReceiver<G
     let mut store = Store::new(
         state,
         |state| {
+            let mut charlie_leds = CHARLIE_LEDS.lock().unwrap();
 
+            charlie_leds.set_leds([
+                state.s_led[0],
+                state.s_led[1],
+                state.s_led[2],
+                state.s_led[3],
+                state.s_led[4],
+                state.s_led[5],
+                state.s_led[6],
+                state.s_led[7],
+                state.run_led,
+            ]);
         },
     );
 
@@ -60,8 +72,11 @@ use core::sync::atomic::{Ordering};
 extern "C" fn telemetry_thread_fn() {
     let _ = MAIN_SENDER.send(GlobalEvent::Info);
 
+    CHARLIE_LEDS.lock().unwrap().set_led(0, true);
+
     loop {
-        delay(Duration::from_ms(150)).unwrap();
+        CHARLIE_LEDS.lock().unwrap().next();
+        delay(Duration::from_ms(1)).unwrap();
     }
 }
 
@@ -119,6 +134,13 @@ pub extern "C" fn handle_button(button_state: u8, button_id: u8) {
     */
 }
 
+use crate::os::Mutex;
+use crate::peripheral::Static;
+use crate::hal::traits::Error;
+use crate::hal::gpio_pin::GPIOPin;
+
+pub static CHARLIE_LEDS: Static<Mutex<leds::CharlieLedManager<GPIOPin>>> = Static::new();
+
 #[no_mangle]
 pub extern "C" fn app() {
 
@@ -145,13 +167,30 @@ pub extern "C" fn app() {
     DEBUG_INFO_SENDER.init(debug_info_sender);
     DEBUG_INFO_RECEIVER.init(debug_info_receiver);
 
+    let mut charlie_led = leds::CharlieLedManager::new(
+        [
+            &LED_0_PIN,
+            &LED_1_PIN,
+            &LED_2_PIN,
+            &LED_3_PIN,
+        ]
+    );
+
+    let charlie_mutex = Mutex::new(charlie_led)
+        .map_err(|_| Error {
+            call: "GPIO init static Mutex::new",
+        }).expect("fail to create mutex");
+    CHARLIE_LEDS.init(charlie_mutex);
+
+    /*
     LED_0_PIN.lock().unwrap().mode(GpioMode::GPIO_MODE_OUTPUT_PP);
     LED_1_PIN.lock().unwrap().mode(GpioMode::GPIO_MODE_OUTPUT_PP);
     LED_0_PIN.lock().unwrap().write(PinState::Set);
     LED_1_PIN.lock().unwrap().write(PinState::Reset);
+    */
 
     // TODO check stack size in linux
-    spawn("telemetry_thread", 128, telemetry_thread_fn).unwrap();
+    spawn("telemetry_thread", 256, telemetry_thread_fn).unwrap();
     spawn("debug_info_thread", 256, debug_info_thread_fn).unwrap();
 
     debug_println!("Starting main loop");
