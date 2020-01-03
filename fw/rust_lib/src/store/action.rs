@@ -13,6 +13,13 @@ pub enum JogDirection {
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
+pub enum Buttons {
+    S(usize),
+    Shift,
+    Play,
+}
+
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub enum GlobalEvent {
 	Jog(JogDirection),
 	
