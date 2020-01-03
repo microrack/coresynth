@@ -18,6 +18,8 @@ pub mod glue;
 mod peripheral;
 mod store;
 
+mod leds;
+
 use core::ops::DerefMut;
 
 mod encoder;
