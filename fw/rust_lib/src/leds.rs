@@ -13,7 +13,7 @@ const LED_LAYOUT: [(usize, usize); LED_SIZE] = [
     (3, 2),
     (2, 1),
     (1, 2),
-    (0, 3)
+    (3, 1)
 ];
 
 use crate::os::Mutex;

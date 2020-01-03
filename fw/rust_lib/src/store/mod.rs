@@ -204,7 +204,7 @@ impl GlobalState {
             }
 
             if self.sequencer_encoder_counter == SEQUENCER_JOG_DIVIDER && true {
-                if self.sequencer_counter + 1 < 8 {
+                if self.sequencer_counter + 1 < 9 {
                     // debug_println!("next");
                     self.sequencer_counter += 1;
                 }
@@ -217,6 +217,8 @@ impl GlobalState {
             if self.sequencer_counter >= 0 && self.sequencer_counter < 8 {
                 self.s_led[self.sequencer_counter as usize] = true;
             }
+
+            self.run_led = self.sequencer_counter == 8;
 
             self.sequencer_encoder_counter = 0;
         }
