@@ -106,15 +106,21 @@ pub extern "C" fn handle_input(enc1: u8, enc2: u8) {
 // This function should be called only from GPIO ISR
 #[no_mangle]
 pub extern "C" fn handle_button(button_state: u8, button_id: u8) {
-    /*
-    use GlobalEvent::PhysicalButton;
+    use GlobalEvent::{PhysicalButton, Buttons};
+
+    let button = match button_id {
+        0..8 => Buttons::S(button_id),
+        8 => Buttons::Shift,
+        9 => Buttons::Play,
+        _ => {/* unknown button */}
+    };
+
     match MAIN_SENDER.get() {
         Some(x) => {
             let _ = x.send(PhysicalButton(button_state != 0));
         },
         None => {},
     };
-    */
 }
 
 #[no_mangle]
