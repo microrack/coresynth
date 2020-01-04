@@ -33,7 +33,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t pin) {
 
     for(id = 0; id < 10; id++) {
         if(pin == BUTTON_GPIOS[id]) {
-            handle_button(HAL_GPIO_ReadPin(GPIOA, BUTTON_GPIOS[id]) == GPIO_PIN_SET ? 1 : 0, id);
+            handle_button(HAL_GPIO_ReadPin(GPIOA, BUTTON_GPIOS[id]) == GPIO_PIN_RESET ? 1 : 0, id);
             break;
         }
     }

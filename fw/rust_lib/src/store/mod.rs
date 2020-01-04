@@ -8,13 +8,25 @@ use self::generic::StoreState;
 use crate::os::{Duration, TimerId, timeout, MailSender, cancel_timeout, Instant, MailReceiver};
 use crate::peripheral::Static;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct ButtonState {
     actual_state: bool,
     logic_state: bool,
     debounce_timer_id: Option<TimerId>,
     long_press_timer_id: Option<TimerId>,
     long_press_occurred: bool,
+}
+
+impl ButtonState {
+    pub fn new() -> Self {
+        ButtonState {
+            actual_state: false,
+            logic_state: false,
+            debounce_timer_id: None,
+            long_press_timer_id: None,
+            long_press_occurred: false,
+        }
+    }
 }
 
 use crate::config::{
@@ -32,6 +44,10 @@ pub struct GlobalState {
 
     sequencer_encoder_counter: i32,
     sequencer_counter: i8,
+
+    s_buttons: [ButtonState; 8],
+    shift_button: ButtonState,
+    play_button: ButtonState,
 
     info_timer_id: Option<TimerId>,
 }
@@ -93,46 +109,69 @@ impl GlobalState {
             sequencer_encoder_counter: 0,
             sequencer_counter: 0,
 
+            s_buttons: [ButtonState::new();8],
+            shift_button: ButtonState::new(),
+            play_button: ButtonState::new(),
+
             info_timer_id: None,
         };
 
         res
     }
 
-    fn update_button(&mut self, _sender: &MailSender<GlobalEvent>) {
-        /*
-        if self.button_state.actual_state != self.button_state.logic_state {
-            self.button_state.logic_state = self.button_state.actual_state;
+    fn update_button(&mut self, button: Buttons, sender: &MailSender<GlobalEvent>) {
+        let button_state = match button {
+            Buttons::S(id) => &mut self.s_buttons[id],
+            Buttons::Shift => &mut self.shift_button,
+            Buttons::Play => &mut self.play_button,
+        };
 
-            debug_println!("# BTN_PRESSED:{}", self.button_state.logic_state);
+        if button_state.actual_state != button_state.logic_state {
+            button_state.logic_state = button_state.actual_state;
 
-            if self.button_state.logic_state {
-                self.on_button_down(sender);
+            debug_println!("# BTN_PRESSED:{}", button_state.logic_state);
+
+            if button_state.logic_state {
+                // self.on_button_down(sender);
             } else {
-                self.on_button_up(sender);
+                // self.on_button_up(sender);
             }
         }
-        */
     }
 
-    fn on_physical_button(&mut self, state:bool, button: Buttons, _sender: &MailSender<GlobalEvent>) {
-        /*
-        self.button_state.actual_state = state;
-        match self.button_state.debounce_timer_id {
+    fn on_physical_button(&mut self, state: bool, button: Buttons, sender: &MailSender<GlobalEvent>) {
+        let timer_id = {
+            let button_state = match button {
+                Buttons::S(id) => &mut self.s_buttons[id],
+                Buttons::Shift => &mut self.shift_button,
+                Buttons::Play => &mut self.play_button,
+            };
+
+            button_state.actual_state = state;
+
+            button_state.debounce_timer_id
+        };
+
+        match timer_id {
             None => {
-                self.update_button(sender);
+                self.update_button(button, sender);
+
+                let button_state = match button {
+                    Buttons::S(id) => &mut self.s_buttons[id],
+                    Buttons::Shift => &mut self.shift_button,
+                    Buttons::Play => &mut self.play_button,
+                };
 
                 let sender = sender.clone();
-                self.button_state.debounce_timer_id = Some(timeout(
+                button_state.debounce_timer_id = Some(timeout(
                     DEBOUNCE_TIME,
-                    move || { safe_send(&sender, GlobalEvent::ButtonDebounce); }
+                    move || { safe_send(&sender, GlobalEvent::ButtonDebounce(button)); }
                 ));
             },
             Some(_) => {
                 // do nothing
             }
         }
-        */
     }
 
     fn on_button_down(&mut self, _sender: &MailSender<GlobalEvent>) {
@@ -165,11 +204,15 @@ impl GlobalState {
         */
     }
 
-    fn on_button_debounce(&mut self, sender: &MailSender<GlobalEvent>) {
-        /*
-        self.button_state.debounce_timer_id = None;
-        self.update_button(sender);
-        */
+    fn on_button_debounce(&mut self, button: Buttons, sender: &MailSender<GlobalEvent>) {
+        let mut button_state = match button {
+            Buttons::S(id) => self.s_buttons[id],
+            Buttons::Shift => self.shift_button,
+            Buttons::Play => self.play_button,
+        };
+        button_state.debounce_timer_id = None;
+
+        self.update_button(button, sender);
     }
 
     fn on_click(&mut self, _sender: &MailSender<GlobalEvent>) {
@@ -264,7 +307,7 @@ impl StoreState<GlobalEvent> for GlobalState {
             Jog(dir) => self.on_jog(dir, sender),
 
             PhysicalButton(state, button) => self.on_physical_button(state, button, sender),
-            // ButtonDebounce => self.on_button_debounce(sender),
+            ButtonDebounce(button) => self.on_button_debounce(button, sender),
             // LongPress => self.on_long_press(sender),
 
             Wakeup => self.turn_on(sender),

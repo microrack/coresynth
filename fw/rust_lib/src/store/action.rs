@@ -23,6 +23,7 @@ pub enum Buttons {
 pub enum GlobalEvent {
 	Jog(JogDirection),
 	PhysicalButton(bool, Buttons),
+    ButtonDebounce(Buttons),
     Wakeup,
     Info,
 }
