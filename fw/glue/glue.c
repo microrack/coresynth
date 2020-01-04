@@ -8,16 +8,17 @@ void system_reset() {
 }
 
 uint32_t BUTTON_GPIOS[] = {
-    GPIO_PIN_0,
-    GPIO_PIN_1,
-    GPIO_PIN_2,
-    GPIO_PIN_3,
-    GPIO_PIN_4,
-    GPIO_PIN_5,
-    GPIO_PIN_6,
-    GPIO_PIN_7,
-    GPIO_PIN_8,
-    GPIO_PIN_12
+    GPIO_PIN_7, // 1
+    GPIO_PIN_6, // 2
+    GPIO_PIN_5, // 3
+    GPIO_PIN_4, // 4
+    GPIO_PIN_12, // 5
+    GPIO_PIN_8, // 6
+    GPIO_PIN_2, // 7
+    GPIO_PIN_1, // 8
+
+    GPIO_PIN_3, // shift
+    GPIO_PIN_0, // play
 };
 
 void HAL_GPIO_EXTI_Callback(uint16_t pin) {
