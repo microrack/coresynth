@@ -170,7 +170,7 @@ pub extern "C" fn app() {
 
     debug_println!("\n\n === core synth ===\n");
 
-    let (main_sender, main_receiver) = mail_queue::<GlobalEvent>(20).unwrap();
+    let (main_sender, main_receiver) = mail_queue::<GlobalEvent>(10).unwrap();
     MAIN_SENDER.init(main_sender.clone());
 
     let (debug_info_sender, debug_info_receiver) = mail_queue::<DebugInfo>(2).unwrap();
